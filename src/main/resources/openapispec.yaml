@@ -1,0 +1,119 @@
+openapi: 3.0.0
+info:
+   title: "Open API Vertx Customer Example by Dinesh Sharma"
+   version: 1.0.0
+servers:
+  - url: http://localhost:8080/api/customer
+    description: local
+paths:
+  /api/customer:
+    get:
+      x-vertx-event-bus:
+        address: customer.v1
+        method: getCustomerList 
+      summary: Get list of all customers
+      operationId: getCustomerList
+      parameters:
+      - name: id
+        in: query
+        required: false
+        schema:
+          type: array
+          items:
+            type: string
+      - name: firstName
+        in: query
+        required: false
+        schema:
+          type: array
+          items:
+            type: string
+      - name: lastName
+        in: query
+        required: false
+        schema:
+          type: array
+          items:
+            type: string        
+      security:
+        - api_key: []
+      responses:
+        200:
+          description: Get list of all customers
+    post:
+      x-vertx-event-bus:
+        address: customer.v1
+        method: createCustomer 
+      summary: Create customer
+      operationId: createCustomer
+#      security:
+#        - api_key: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Customer"
+      responses:
+        200:
+          description: Customer saved   
+  /api/customer/{customerId}:
+    parameters:
+      - name: customerId
+        in: path
+        required: true
+        schema:
+          type: string
+    get:
+      x-vertx-event-bus:
+        address: customer.v1
+        method: getCustomer 
+      summary: Get list of all customers by id
+      operationId: getCustomer
+      responses:
+        200:
+          description: Customer by id
+    put:
+      x-vertx-event-bus:
+        address: customer.v1
+        method: updateCustomer 
+      summary: updateCustomer
+      operationId: updateCustomer
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Customer"
+      responses:
+        200:
+          description: Updated customer by id
+    delete:
+      x-vertx-event-bus:
+        address: customer.v1
+        method: deleteCustomer 
+      summary: Delete customer by id
+      operationId: deleteCustomer
+      responses:
+        200:
+          description: Customer deleted by id                    
+components:
+  securitySchemes:
+    api_key:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    Customer:
+      type: object
+      properties:
+        id:
+          type: string
+        firstName:
+          type: string
+        lastName:
+          type: string
+      additionalProperties: false
+      required:
+        - firstName
+        - lastName
